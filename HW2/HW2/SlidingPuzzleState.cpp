@@ -29,3 +29,13 @@ SlidingPuzzleState::SlidingPuzzleState(const int tiles_[12])
 SlidingPuzzleState::~SlidingPuzzleState()
 {
 }
+
+
+
+LList<int> GetMoves()
+{
+    LList<T> *temp = new LList<T>;
+
+    
+    return theList;
+}

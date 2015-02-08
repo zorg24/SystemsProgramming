@@ -4,3 +4,17 @@
 *.suo
 *.vcxproj
 *.filters
+
+*.pbxproj
+
+*.xcworkspacedata
+
+*.xccheckout
+
+*.xcuserstate
+
+*.xcscheme
+
+*.plist
+
+*.xcbkptlist
