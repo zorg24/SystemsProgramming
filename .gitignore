@@ -18,3 +18,10 @@
 *.plist
 
 *.xcbkptlist
+*.exe
+*.ilk
+*.pdb
+*.log
+*.tlog
+*.obj
+*.idb

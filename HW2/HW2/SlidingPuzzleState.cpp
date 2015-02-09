@@ -59,7 +59,7 @@ LList<int> SlidingPuzzleState::GetMoves()
 
 bool SlidingPuzzleState::IsValid(int row, int col)
 {
-    return row >= 0 && row < 3 && col >= 0 && col > 4;
+    return (row >= 0 && row < 3 && col >= 0 && col < 4);
 }
 
 bool SlidingPuzzleState::ApplyMove(int move)
@@ -95,15 +95,15 @@ bool SlidingPuzzleState::ApplyMove(int move)
             otherIndex = 4 * (row - 1) + col;
             break;
         case RIGHT:
-            otherIndex = 4 * (row +1) + col;
+            otherIndex = 4 * (row + 1) + col;
             break;
         default:
             std::cerr << "WTF you shouldn't be reaching this" << std::endl;
             return false;
     }
     int temp = tiles[otherIndex];
-    tiles[4 * row + col] = otherIndex;
-    tiles[otherIndex] = temp;
+	tiles[otherIndex] = tiles[4 * row + col];
+	tiles[4 * row + col] = temp;
     return true;
 }
 
