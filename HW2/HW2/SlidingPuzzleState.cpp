@@ -164,3 +164,8 @@ void SlidingPuzzleState::Print()
 		std::cout << std::endl;
 	}
 }
+
+SlidingPuzzleState *SlidingPuzzleState::Clone()
+{
+	return new SlidingPuzzleState(tiles);
+}
