@@ -32,22 +32,9 @@ SlidingPuzzleState::~SlidingPuzzleState()
 LList<int> SlidingPuzzleState::GetMoves()
 {
     LList<int> *temp = new LList<int>;
-    //    finding the empty cell
     int row = 0, col = 0;
-    for (row = 0; row < 3; ++row)
-    {
-        for (col = 0; col < 4; ++col)
-        {
-            if (tiles[4 * row + col] == 0)
-            {
-                break;
-            }
-        }
-        if (tiles[4 * row + col] == 0)
-        {
-            break;
-        }
-    }
+    GetEmptySquare(row, col);
+    
     if(IsValid(row-1, col))
     {
         temp->AddFront(LEFT);
@@ -91,20 +78,7 @@ bool SlidingPuzzleState::ApplyMove(int move)
     }
     
     int row = 0, col = 0;
-    for (row = 0; row < 3; ++row)
-    {
-        for (col = 0; col < 4; ++col)
-        {
-            if (tiles[4 * row + col] == 0)
-            {
-                break;
-            }
-        }
-        if (tiles[4 * row + col] == 0)
-        {
-            break;
-        }
-    }
+    GetEmptySquare(row, col);
     
     int otherIndex;
     switch (move)
@@ -157,4 +131,25 @@ int SlidingPuzzleState::GetTileInSquare(int row, int col)
     }
     return tiles[4 * row + col];
 }
+
+void SlidingPuzzleState::GetEmptySquare(int &row, int &col)
+{
+    for (row = 0; row < 3; ++row)
+    {
+        for (col = 0; col < 4; ++col)
+        {
+            if (tiles[4 * row + col] == 0)
+            {
+                break;
+            }
+        }
+        if (tiles[4 * row + col] == 0)
+        {
+            break;
+        }
+    }
+}
+
+
+
 
