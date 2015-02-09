@@ -130,3 +130,21 @@ bool SlidingPuzzleState::ApplyMove(int move)
     tiles[otherIndex] = temp;
     return true;
 }
+
+bool  SlidingPuzzleState::UndoMove(int move)
+{
+    switch(move)
+    {
+        case UP:
+           return ApplyMove(DOWN);
+        case DOWN:
+           return ApplyMove(UP);
+        case LEFT:
+            return ApplyMove(RIGHT);
+        case RIGHT:
+            return ApplyMove(LEFT);
+        default:
+            std::cerr << "WTF you shouldn't be reaching this" << std::endl;
+            return false;
+    }
+}
