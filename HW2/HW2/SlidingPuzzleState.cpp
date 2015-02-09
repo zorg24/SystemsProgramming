@@ -73,5 +73,63 @@ LList<int> SlidingPuzzleState::GetMoves()
 
 bool SlidingPuzzleState::IsValid(int row, int col)
 {
-    return row >= 0 && row < 3 && col >= 0 && col > 4;
+    return row >= 0 && row < 3 && col >= 0 && col < 4;
+}
+
+bool SlidingPuzzleState::ApplyMove(int move)
+{
+    bool ret = false;
+    for (LList<int> moves = GetMoves(); !moves.IsEmpty(); moves.RemoveFront())
+    {
+        if (moves.PeekFront() == move)
+        {
+            ret = true;
+            break;
+        }
+    }
+    
+    if (!ret)
+    {
+        return ret;
+    }
+    
+    int row = 0, col = 0;
+    for (row = 0; row < 3; ++row)
+    {
+        for (col = 0; col < 4; ++col)
+        {
+            if (tiles[4 * row + col] == 0)
+            {
+                break;
+            }
+        }
+        if (tiles[4 * row + col] == 0)
+        {
+            break;
+        }
+    }
+    
+    int otherIndex;
+    switch (move)
+    {
+        case UP:
+            otherIndex = 4 * row + (col - 1);
+            break;
+        case DOWN:
+            otherIndex = 4 * row + (col + 1);
+            break;
+        case LEFT:
+            otherIndex = 4 * (row - 1) + col;
+            break;
+        case RIGHT:
+            otherIndex = 4 * (row +1) + col;
+            break;
+        default:
+            std::cerr << "WTF you shouldn't be reaching this" << std::endl;
+            return false;
+    }
+    int temp = tiles[otherIndex];
+    tiles[4 * row + col] = otherIndex;
+    tiles[otherIndex] = temp;
+    return true;
 }
