@@ -150,6 +150,17 @@ void SlidingPuzzleState::GetEmptySquare(int &row, int &col)
     }
 }
 
-
-
-
+void SlidingPuzzleState::Print()
+{
+	for (int row = 0; row < 3; ++row)
+	{
+		for (int col = 0; col < 4; ++col)
+		{
+			if (GetTileInSquare(row, col) == 0)
+				std::cout << " .";
+			else
+				std::cout << " " << GetTileInSquare(row, col);
+		}
+		std::cout << std::endl;
+	}
+}
