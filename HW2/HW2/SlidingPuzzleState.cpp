@@ -20,7 +20,7 @@ SlidingPuzzleState::SlidingPuzzleState(const int tiles_[12])
         }
         else
         {
-            std::cerr << "The " << i << "th element of the input contains an element outside of the range [0,12).";
+            std::cerr << "The " << i << "th element of the input contains an element outside of the range [0,12)." << std::endl;
         }
     }
 }
@@ -75,3 +75,4 @@ bool SlidingPuzzleState::IsValid(int row, int col)
 {
     return row >= 0 && row < 3 && col >= 0 && col > 4;
 }
+
