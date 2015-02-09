@@ -4,6 +4,7 @@
 
 SlidingPuzzleState::SlidingPuzzleState(const int tiles_[12])
 {
+    tiles = new int[12];
     for (int i = 0; i < 12; ++i)
     {
         for (int j = i; tiles_[i] != tiles_[j]; ++j)
@@ -169,4 +170,16 @@ void SlidingPuzzleState::Print()
 SlidingPuzzleState *SlidingPuzzleState::Clone()
 {
 	return new SlidingPuzzleState(tiles);
+}
+
+bool SlidingPuzzleState::IsSolution()
+{
+    for (int i = 0; i < 12; ++i)
+    {
+        if (tiles[i] != i)
+        {
+            return false;
+        }
+    }
+    return true;
 }
