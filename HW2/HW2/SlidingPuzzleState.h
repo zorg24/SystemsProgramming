@@ -13,7 +13,7 @@ public:
 	void Print();
 	SlidingPuzzleState *Clone();
 	bool IsSolution();
-	const int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
+	static const int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
 private:
 	int tiles[12];
     bool IsValid(int row, int col);
