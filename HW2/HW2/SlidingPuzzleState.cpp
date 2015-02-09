@@ -27,6 +27,7 @@ SlidingPuzzleState::SlidingPuzzleState(const int tiles_[12])
 
 SlidingPuzzleState::~SlidingPuzzleState()
 {
+	delete[] tiles;
 }
 
 LList<int> SlidingPuzzleState::GetMoves()
