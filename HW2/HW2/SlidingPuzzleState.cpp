@@ -148,3 +148,13 @@ bool  SlidingPuzzleState::UndoMove(int move)
             return false;
     }
 }
+
+int SlidingPuzzleState::GetTileInSquare(int row, int col)
+{
+    if(!IsValid(row, col))
+    {
+        return -1;
+    }
+    return tiles[4 * row + col];
+}
+
