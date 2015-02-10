@@ -33,28 +33,28 @@ SlidingPuzzleState::~SlidingPuzzleState()
 
 LList<int> SlidingPuzzleState::GetMoves()
 {
-    LList<int> *temp = new LList<int>;
+	LList<int> temp;;
     int row = 0, col = 0;
     GetEmptySquare(row, col);
     
     if(IsValid(row-1, col))
     {
-        temp->AddFront(UP);
+        temp.AddFront(UP);
     }
     if(IsValid(row+1, col))
     {
-        temp->AddFront(DOWN);
+        temp.AddFront(DOWN);
     }
     if(IsValid(row, col-1))
     {
-        temp->AddFront(LEFT);
+        temp.AddFront(LEFT);
     }
     if(IsValid(row, col+1))
     {
-        temp->AddFront(RIGHT);
+        temp.AddFront(RIGHT);
     }
     
-    return *temp;
+    return temp;
 }
 
 bool SlidingPuzzleState::IsValid(int row, int col)
