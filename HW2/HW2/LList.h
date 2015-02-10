@@ -20,11 +20,12 @@ public:
     void Print();
 
 private:
-    ListItem<T> *head = nullptr;
+    ListItem<T> *head;
 };
 
 template<typename T>
 LList<T>::LList() {
+	head = nullptr;
 }
 
 template<typename T>

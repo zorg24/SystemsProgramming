@@ -39,19 +39,19 @@ LList<int> SlidingPuzzleState::GetMoves()
     
     if(IsValid(row-1, col))
     {
-        temp->AddFront(LEFT);
+        temp->AddFront(UP);
     }
     if(IsValid(row+1, col))
     {
-        temp->AddFront(RIGHT);
+        temp->AddFront(DOWN);
     }
     if(IsValid(row, col-1))
     {
-        temp->AddFront(UP);
+        temp->AddFront(LEFT);
     }
     if(IsValid(row, col+1))
     {
-        temp->AddFront(DOWN);
+        temp->AddFront(RIGHT);
     }
     
     return *temp;
@@ -85,16 +85,16 @@ bool SlidingPuzzleState::ApplyMove(int move)
     int otherIndex;
     switch (move)
     {
-        case UP:
+        case LEFT:
             otherIndex = 4 * row + (col - 1);
             break;
-        case DOWN:
+        case RIGHT:
             otherIndex = 4 * row + (col + 1);
             break;
-        case LEFT:
+        case UP:
             otherIndex = 4 * (row - 1) + col;
             break;
-        case RIGHT:
+        case DOWN:
             otherIndex = 4 * (row + 1) + col;
             break;
         default:
@@ -142,12 +142,8 @@ void SlidingPuzzleState::GetEmptySquare(int &row, int &col)
         {
             if (tiles[4 * row + col] == 0)
             {
-                break;
+				return;
             }
-        }
-        if (tiles[4 * row + col] == 0)
-        {
-            break;
         }
     }
 }
