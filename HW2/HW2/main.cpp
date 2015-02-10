@@ -22,7 +22,8 @@ int main(int argc, char* argv[]) {
 
 void DepthLimitedDFS(int depth, SlidingPuzzleState &state)
 {
-	LList<int> moveList = state.GetMoves();
+	LList<int> moveList;
+	state.GetMoves(moveList);
 	if (state.IsSolution())
 	{
 		std::cout << "Found a solution:" << std::endl;
@@ -43,7 +44,8 @@ void DepthLimitedDFS(int depth, SlidingPuzzleState &state)
 
 bool DepthLimitedDFS(int depth, SlidingPuzzleState &state, bool isSolved, LList<int> &moves)
 {
-	LList<int> moveList = state.GetMoves();
+	LList<int> moveList;
+	state.GetMoves(moveList);
 	if (state.IsSolution())
 	{
 		return true;

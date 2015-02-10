@@ -5,7 +5,7 @@ class SlidingPuzzleState
 public:
 	SlidingPuzzleState(const int tiles[12]);
 	~SlidingPuzzleState();
-	LList<int> GetMoves();
+	void GetMoves(LList<int> &l);
 	bool ApplyMove(int move);
 	bool UndoMove(int move);
 	int GetTileInSquare(int row, int col);

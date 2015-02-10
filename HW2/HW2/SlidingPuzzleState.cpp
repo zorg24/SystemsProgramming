@@ -31,30 +31,27 @@ SlidingPuzzleState::~SlidingPuzzleState()
 	delete[] tiles;
 }
 
-LList<int> SlidingPuzzleState::GetMoves()
+void SlidingPuzzleState::GetMoves(LList<int> &l)
 {
-	LList<int> temp;;
     int row = 0, col = 0;
     GetEmptySquare(row, col);
     
     if(IsValid(row-1, col))
     {
-        temp.AddFront(UP);
+        l.AddFront(UP);
     }
     if(IsValid(row+1, col))
     {
-        temp.AddFront(DOWN);
+        l.AddFront(DOWN);
     }
     if(IsValid(row, col-1))
     {
-        temp.AddFront(LEFT);
+        l.AddFront(LEFT);
     }
     if(IsValid(row, col+1))
     {
-        temp.AddFront(RIGHT);
+        l.AddFront(RIGHT);
     }
-    
-    return temp;
 }
 
 bool SlidingPuzzleState::IsValid(int row, int col)
@@ -65,7 +62,8 @@ bool SlidingPuzzleState::IsValid(int row, int col)
 bool SlidingPuzzleState::ApplyMove(int move)
 {
     bool ret = false;
-    for (LList<int> moves = GetMoves(); !moves.IsEmpty(); moves.RemoveFront())
+	LList<int> moves;
+    for (GetMoves(moves); !moves.IsEmpty(); moves.RemoveFront())
     {
         if (moves.PeekFront() == move)
         {
