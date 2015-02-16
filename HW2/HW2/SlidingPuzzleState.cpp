@@ -7,9 +7,10 @@ SlidingPuzzleState::SlidingPuzzleState(const int tiles_[12])
     tiles = new int[12];
     for (int i = 0; i < 12; ++i)
     {
-        for (int j = i; tiles_[i] != tiles_[j]; ++j)
+        for (int j = i + 1; j < 12; ++j)
         {
-            std::cerr << "The input contains a duplicate entry" << std::endl;
+			if (tiles_[i] == tiles_[j])
+				std::cerr << "The input contains a duplicate entry specifically it contains two of the element " << tiles_[i] << std::endl;
         }
     }
     
