@@ -3,7 +3,8 @@
 #include "SlidingPuzzleState.h"
 #include <cstdint>
 
-namespace ParallelBFS {
+namespace SequentialBFS {
+
 	void DoBFS()
 	{
 
