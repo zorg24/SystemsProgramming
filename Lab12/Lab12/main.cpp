@@ -30,8 +30,8 @@ void ThreadWorker(SharedQueue<Range> *workQueue, SharedQueue<uint64_t> *resultQu
 	while (true)
 	{
 		Range r;
-		if (!workQueue->Remove(r))
-			continue;
+		while (!workQueue->Remove(r))
+			std::this_thread::yield();
 		if (r.from != r.to)
 		{
 			for (int i = r.from; i < r.to; ++i)
