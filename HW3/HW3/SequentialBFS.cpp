@@ -25,26 +25,26 @@ namespace SequentialBFS {
 		std::cout.setf(std::ios::fixed, std::ios::floatfield); // floatfield set to fixed
 		std::cout.precision(2);
 
-		while (seenStates != s.GetMaxRank())
+		while (seenStates != s.GetMaxRank()) //keep going until seenStates is the maxRank
 		{
-			Timer roundTimer;
-			for (int x = 0; x < s.GetMaxRank(); x++)
+			Timer roundTimer; //new timer
+			for (int x = 0; x < s.GetMaxRank(); x++) //loop through the all the entries (meaning maxRank)
 			{
-				if (stateDepths[x] == currDepth)
+				if (stateDepths[x] == currDepth) //if the state we're at is the current Depth
 				{
-					s.Unrank(x);
-					s.GetMoves(moves);
-					while (moves.IsEmpty() == false)
+					s.Unrank(x); //convert the index into a map
+					s.GetMoves(moves); //get the moves from this current state
+					while (moves.IsEmpty() == false) //as long as there are moves
 					{
-						s.ApplyMove(moves.PeekFront());
-						uint32_t rank = s.Rank();
-						s.UndoMove(moves.PeekFront());
-						moves.RemoveFront();
+						s.ApplyMove(moves.PeekFront()); //on this map, apply the move at the front of the map
+						uint32_t rank = s.Rank(); //make variable named 'rank' to get the index of this map
+						s.UndoMove(moves.PeekFront()); //on this map, undo hte move at the front of the map
+						moves.RemoveFront(); //remove the front of of this list
 
-						if (stateDepths[rank] == 255)
+						if (stateDepths[rank] == 255) //if the state at this index is equal to 255 (something unseen)
 						{
-							stateDepths[rank] = currDepth + 1;
-							seenStates++;
+							stateDepths[rank] = currDepth + 1; //then set the value at this rank (index) to one more than the current depth since it's one move away from where we  currently are
+							seenStates++; //increment seenstates since we've seen another state
 						}
 					}
 				}
@@ -53,8 +53,11 @@ namespace SequentialBFS {
 			std::cout << "Depth " << currDepth;
 			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
 			std::cout << " total states seen.\n";
-			currDepth++;
+			currDepth++; //our current depth is incremented
 		}
+        //INDEX translates to the stae
+        //UNRANK converts the index the map
+        //RANK the map makes it hte index
 		std::cout << fullTimer.EndTimer() << "s elapsed\n";
 		delete[] stateDepths;
 	}
