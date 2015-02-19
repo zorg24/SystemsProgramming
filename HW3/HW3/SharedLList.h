@@ -1,25 +1,26 @@
 //
-//  LList.h
-//  Lab9
+//  SharedLList.h
+//  Homework 3
 //
-//  Created by Nathan Sturtevant on 2/10/15.
+//  Created by Nathan Sturtevant on 2/16/15.
 //  Copyright (c) 2015 Nathan Sturtevant. All rights reserved.
 //
 
-#ifndef Lab9_LList_h
-#define Lab9_LList_h
+#ifndef Homework_3_SharedLList_h
+#define Homework_3_SharedLList_h
 
 #include <iostream>
+#include <thread>
 
 template <typename T>
-class LList {
+class SharedLList {
 public:
-	LList();
-	~LList();
+	SharedLList();
+	~SharedLList();
 	bool IsEmpty();
-	void AddFront(T item);
+	void AddBack(T item);
 	T PeekFront();
-	void RemoveFront();
+	bool RemoveFront(T &item);
 	void Print();
 private:
 	struct ListItem
@@ -29,18 +30,20 @@ private:
 	};
 	ListItem *GetFromCache();
 	void Free(ListItem *l);
-	ListItem *head, *cache;
+	ListItem *head, *tail;
+	ListItem *cache;
+	std::mutex lock;
 };
 
 template <typename T>
-LList<T>::LList()
+SharedLList<T>::SharedLList()
 {
-	head = 0;
+	head = tail = 0;
 	cache = 0;
 }
 
 template <typename T>
-LList<T>::~LList()
+SharedLList<T>::~SharedLList()
 {
 	while (head != 0)
 	{
@@ -58,40 +61,57 @@ LList<T>::~LList()
 
 
 template <typename T>
-bool LList<T>::IsEmpty()
+bool SharedLList<T>::IsEmpty()
 {
 	return head == 0;
 }
 
 
 template <typename T>
-void LList<T>::AddFront(T item)
+void SharedLList<T>::AddBack(T item)
 {
+	lock.lock();
+
 	ListItem *t = GetFromCache();
 	t->item = item;
-	t->next = head;
-	head = t;
-}
-
-
-template <typename T>
-T LList<T>::PeekFront()
-{
-	return head->item;
-}
-
-template <typename T>
-void LList<T>::RemoveFront()
-{
+	t->next = 0;
 	if (head == 0)
-		return;
-	ListItem *t = head;
-	head = head->next;
-	Free(t);
+	{
+		head = t;
+		tail = t;
+	}
+	else {
+		tail->next = t;
+		tail = t;
+	}
+	lock.unlock();
 }
 
 template <typename T>
-typename LList<T>::ListItem *LList<T>::GetFromCache()
+bool SharedLList<T>::RemoveFront(T &item)
+{
+	lock.lock();
+	if (head == 0)
+	{
+		lock.unlock();
+		return false;
+	}
+	item = head->item;
+	ListItem *t = head;
+	if (head == tail)
+	{
+		head = tail = 0;
+	}
+	else {
+		head = head->next;
+	}
+	Free(t);
+	lock.unlock();
+	return true;
+}
+
+template <typename T>
+typename SharedLList<T>::ListItem *SharedLList<T>::GetFromCache()
 {
 	if (cache == 0)
 		return new ListItem;
@@ -102,23 +122,22 @@ typename LList<T>::ListItem *LList<T>::GetFromCache()
 }
 
 template <typename T>
-void LList<T>::Free(ListItem *l)
+void SharedLList<T>::Free(ListItem *l)
 {
-	if (l)
-	{
-		l->next = cache;
-		cache = l;
-	}
+	l->next = cache;
+	cache = l;
 }
 
 template <typename T>
-void LList<T>::Print()
+void SharedLList<T>::Print()
 {
+	lock.lock();
 	for (ListItem *t = head; t; t = t->next)
 	{
 		std::cout << t->item << " ";
 	}
 	std::cout << "\n";
+	lock.unlock();
 }
 
 

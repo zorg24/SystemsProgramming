@@ -1,26 +1,28 @@
 //
 //  Timer.h
-//  Lab11
+//  Homework 3
+//
+//  Created by Nathan Sturtevant on 2/16/15.
+//  Copyright (c) 2015 Nathan Sturtevant. All rights reserved.
 //
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef __Homework_3__Timer__
+#define __Homework_3__Timer__
 
-#include <stdint.h>
-#include <fstream>
+#include <stdio.h>
 #include <chrono>
+#include <ctime>
 
-class Timer {
+class Timer
+{
 public:
-  Timer();
-
-  void StartTimer();
-  double EndTimer();
-  double GetElapsedTime();
+	Timer();
+	void StartTimer();
+	double EndTimer();
+	double GetElapsedTime();
 private:
-  std::chrono::high_resolution_clock::time_point startTime;
-  double elapsedTime;
-
+	bool ended;
+	std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
-#endif // TIMER_H
+#endif /* defined(__Homework_3__Timer__) */
