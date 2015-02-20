@@ -10,7 +10,6 @@
 #include "SlidingPuzzleState.h"
 #include "Timer.h"
 #include "SharedLList.h"
-#include <mutex>
 
 namespace ParallelBFS {
 	
@@ -25,7 +24,8 @@ namespace ParallelBFS {
 	 */
 	void WorkerThread(SharedLList<uint32_t> *workQueue, std::mutex *dataLock, uint8_t *data, uint32_t *seenStates, int depth)
 	{
-		// Write your solution code here
+		
+        
 	}
 	
 	void DoBFS(int numThreads)
@@ -56,8 +56,22 @@ namespace ParallelBFS {
 			Timer roundTimer;
 			
 			// Write the code:
+
 			// 1. to displatch threads
+
+            for (int x = 0; x < numThreads; x++)
+            {
+                threads[x] = new std::thread(WorkerThread, &workQueue, &lock, stateDepths, &seenStates, currDepth);
+            }
+
 			// 2. to send the work to the queue
+            
+//            for (uint32_t x = 1; x < s.GetMaxRank(); x+=numThreads)
+//            {
+//               // workQueue.Add({x, std::min(x+numThreads, });
+//            }
+            
+         //I know the for loop parameter above aren't correct, I'll look into it friday
 			// 3. to tell the threads that all work is complete
 			// 4. to join with the threads
 
