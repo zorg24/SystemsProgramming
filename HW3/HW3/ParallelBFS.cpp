@@ -109,7 +109,7 @@ namespace ParallelBFS {
             //use getMaxRank+1
             for(int x = 0; x < s.GetMaxRank()+1; x++)
             {
-                
+                //IC
             }
             
             
