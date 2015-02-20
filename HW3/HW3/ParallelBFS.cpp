@@ -95,18 +95,21 @@ namespace ParallelBFS {
 
 			// 2. to send the work to the queue
 
-			//            for (uint32_t x = 1; x < s.GetMaxRank(); x+=numThreads)
-			//            {
-			//               // workQueue.Add({x, std::min(x+numThreads, });
-			//            }
-
-			//I know the for loop parameter above aren't correct, I'll look into it friday
+            for (uint32_t x = 1; x < s.GetMaxRank(); x+=numThreads)
+            {
+               workQueue.AddBack(x);
+            }
+            
 			// 3. to tell the threads that all work is complete
+            
 			// 4. to join with the threads
 
-
-
-
+            for(int x = 0; x < s.GetMaxRank(); x++)
+            {
+                threads[x]->join();
+                delete threads[x];
+            }
+			
 			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
 			std::cout << "Depth " << currDepth;
 			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
