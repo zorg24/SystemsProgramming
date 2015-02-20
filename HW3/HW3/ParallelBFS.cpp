@@ -100,7 +100,7 @@ namespace ParallelBFS {
 
 			// 2. to send the work to the queue
 
-            for (uint32_t x = 1; x < s.GetMaxRank(); x+=numThreads)
+            for (uint32_t x = 0; x < s.GetMaxRank(); x++)
             {
                workQueue.AddBack(x);
             }
