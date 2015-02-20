@@ -28,13 +28,15 @@ namespace ParallelBFS {
 		while (true)
 		{
 			uint32_t x;
-			workQueue->RemoveFront(x);
-
 			SlidingPuzzleState s;
 			LList<int> moves;
 
 			while (workQueue->RemoveFront(x))
 			{
+				if (x > s.GetMaxRank())
+				{
+					return;
+				}
 				if (data[x] == depth)
 				{
 					s.Unrank(x);
@@ -46,14 +48,17 @@ namespace ParallelBFS {
 						s.UndoMove(moves.PeekFront());
 						moves.RemoveFront();
 
+						dataLock->lock();
 						if (data[rank] == 255)
 						{
 							data[rank] = depth + 1;
 							*seenStates++;
 						}
+						dataLock->unlock();
 					}
 				}
 			}
+			std::this_thread::yield();
 		}
 	}
 
