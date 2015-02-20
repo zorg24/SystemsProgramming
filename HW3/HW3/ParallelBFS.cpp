@@ -106,6 +106,11 @@ namespace ParallelBFS {
             }
             
 			// 3. to tell the threads that all work is complete
+            //use getMaxRank+1
+            for(int x = 0; x < s.GetMaxRank()+1; x++)
+            {
+                
+            }
             
             
 			// 4. to join with the threads
