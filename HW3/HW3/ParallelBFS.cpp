@@ -107,9 +107,9 @@ namespace ParallelBFS {
             
 			// 3. to tell the threads that all work is complete
             //use getMaxRank+1
-            for(int x = 0; x < s.GetMaxRank()+1; x++)
+            for(int x = 0; x < numThreads; x++)
             {
-                //IC
+                workQueue.AddBack(s.GetMaxRank()+1);
             }
             
             
