@@ -26,6 +26,38 @@ namespace ParallelBFS {
 	void WorkerThread(SharedLList<uint32_t> *workQueue, std::mutex *dataLock, uint8_t *data, uint32_t *seenStates, int depth)
 	{
 		// Write your solution code here
+		while (true)
+		{
+			uint32_t x;
+			workQueue->RemoveFront(x);
+
+			SlidingPuzzleState s;
+			LList<int> moves;
+
+			while (workQueue->RemoveFront(x))
+			{
+				if (data[x] == depth)
+				{
+					s.Unrank(x);
+					s.GetMoves(moves);
+					while (moves.IsEmpty() == false)
+					{
+						s.ApplyMove(moves.PeekFront());
+						uint32_t rank = s.Rank();
+						s.UndoMove(moves.PeekFront());
+						moves.RemoveFront();
+
+						if (data[rank] == 255)
+						{
+							data[rank] = depth + 1;
+							*seenStates++;
+						}
+					}
+				}
+			}
+
+
+		}
 	}
 	
 	void DoBFS(int numThreads)
@@ -62,7 +94,7 @@ namespace ParallelBFS {
 			// 4. to join with the threads
 
 			
-			
+						
 			
 			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
 			std::cout << "Depth " << currDepth;

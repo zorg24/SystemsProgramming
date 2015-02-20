@@ -13,7 +13,7 @@
 
 int main(int argc, const char * argv[])
 {
-	//SequentialBFS::DoBFS();
-	ParallelBFS::DoBFS(std::thread::hardware_concurrency());
+	SequentialBFS::DoBFS();
+	//ParallelBFS::DoBFS(std::thread::hardware_concurrency());
 }
 
