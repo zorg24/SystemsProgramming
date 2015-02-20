@@ -27,6 +27,7 @@ namespace ParallelBFS {
 		// Write your solution code here
 		while (true)
 		{
+			Timer roundTimer;
 			uint32_t x;
 			SlidingPuzzleState s;
 			LList<int> moves;
@@ -58,6 +59,11 @@ namespace ParallelBFS {
 					}
 				}
 			}
+			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
+			std::cout << "Depth " << depth;
+			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
+			std::cout << " total states seen.\n";
+			depth++;
 			std::this_thread::yield();
 		}
 	}
@@ -121,11 +127,11 @@ namespace ParallelBFS {
                 delete threads[x];
             }
 			
-			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
-			std::cout << "Depth " << currDepth;
-			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
-			std::cout << " total states seen.\n";
-			currDepth++;
+			//std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
+			//std::cout << "Depth " << currDepth;
+			//std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
+			//std::cout << " total states seen.\n";
+			//currDepth++;
 		}
 		std::cout << fullTimer.EndTimer() << "s elapsed\n";
 		delete[] stateDepths;
