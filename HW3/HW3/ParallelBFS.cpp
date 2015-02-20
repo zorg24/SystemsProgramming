@@ -10,6 +10,7 @@
 #include "SlidingPuzzleState.h"
 #include "Timer.h"
 #include "SharedLList.h"
+#include <mutex>
 
 namespace ParallelBFS {
 	

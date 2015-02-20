@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "LList.h"
+#include <cstdint>
 
 const int kUp = 0;
 const int kDown = 1;
