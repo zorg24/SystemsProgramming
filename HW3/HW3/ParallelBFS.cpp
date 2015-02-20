@@ -10,12 +10,11 @@
 #include "SlidingPuzzleState.h"
 #include "Timer.h"
 #include "SharedLList.h"
-#include <mutex>
 
 namespace ParallelBFS {
-	
+
 	const int workSize = 10000;
-	
+
 	/** Worker Thread:
 	 * Work queue: will send a starting location from which we do workSize work
 	 * dataLock: a lock used when writing to the BFS data
@@ -55,11 +54,9 @@ namespace ParallelBFS {
 					}
 				}
 			}
-
-
 		}
 	}
-	
+
 	void DoBFS(int numThreads)
 	{
 		std::cout << "Running with " << numThreads << " threads\n";
@@ -69,33 +66,47 @@ namespace ParallelBFS {
 		SharedLList<uint32_t> workQueue;
 		std::mutex lock;
 		std::thread **threads = new std::thread*[numThreads];
-		
+
 		uint8_t *stateDepths = new uint8_t[s.GetMaxRank()];
-		
+
 		// set all values to 255
 		memset(stateDepths, 255, s.GetMaxRank());
 		uint32_t seenStates = 1;
 		stateDepths[s.Rank()] = 0;
 		int currDepth = 0;
-		
+
 		Timer fullTimer;
-		
-		std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+
+		std::cout.setf(std::ios::fixed, std::ios::floatfield); // floatfield set to fixed
 		std::cout.precision(2);
-		
+
 		while (seenStates != s.GetMaxRank())
 		{
 			Timer roundTimer;
-			
+
 			// Write the code:
+
 			// 1. to displatch threads
+
+			for (int x = 0; x < numThreads; x++)
+			{
+				threads[x] = new std::thread(WorkerThread, &workQueue, &lock, stateDepths, &seenStates, currDepth);
+			}
+
 			// 2. to send the work to the queue
+
+			//            for (uint32_t x = 1; x < s.GetMaxRank(); x+=numThreads)
+			//            {
+			//               // workQueue.Add({x, std::min(x+numThreads, });
+			//            }
+
+			//I know the for loop parameter above aren't correct, I'll look into it friday
 			// 3. to tell the threads that all work is complete
 			// 4. to join with the threads
 
-			
-						
-			
+
+
+
 			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
 			std::cout << "Depth " << currDepth;
 			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
@@ -103,10 +114,10 @@ namespace ParallelBFS {
 			currDepth++;
 		}
 		std::cout << fullTimer.EndTimer() << "s elapsed\n";
-		delete [] stateDepths;
-		delete [] threads;
+		delete[] stateDepths;
+		delete[] threads;
 	}
-	
+
 	//Sample Run on a 2.3 GHz Intel Core i7 (4 real + 4 virual cores)
 	//  Running with 8 threads
 	//	0.59s elapsed. Depth 0 complete. 3 of 239500800 total states seen.
@@ -163,5 +174,5 @@ namespace ParallelBFS {
 	//	0.57s elapsed. Depth 51 complete. 239500782 of 239500800 total states seen.
 	//	0.63s elapsed. Depth 52 complete. 239500800 of 239500800 total states seen.
 	//	53.77s elapsed
-	
+
 }
