@@ -41,9 +41,9 @@ namespace ParallelBFS {
                 }
                 for (uint32_t i = x; i < x + workSize; i++)
                 {
-                    if (data[x] == depth)
+                    if (data[i] == depth)
                     {
-                        s.Unrank(x);
+                        s.Unrank(i);
                         s.GetMoves(moves);
                         while (moves.IsEmpty() == false)
                         {
@@ -52,13 +52,14 @@ namespace ParallelBFS {
                             s.UndoMove(moves.PeekFront());
                             moves.RemoveFront();
                             
-                            dataLock->lock();
                             if (data[rank] == 255)
                             {
+                                dataLock->lock();
                                 data[rank] = depth + 1;
                                 (*seenStates)++;
+                                dataLock->unlock();
+
                             }
-                            dataLock->unlock();
                         }
                     }
                 }
