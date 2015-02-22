@@ -69,7 +69,7 @@ namespace ParallelBFS {
 
 	void DoBFS(int numThreads)
 	{
-        numThreads = 1;
+//        numThreads = 1;
 		std::cout << "Running with " << numThreads << " threads\n";
 		// By default, starts at goal state
 		SlidingPuzzleState s;
@@ -116,7 +116,7 @@ namespace ParallelBFS {
             }
             
 			// 4. to join with the threads
-            for(int x = 0; x < s.GetMaxRank(); x++)
+            for(int x = 0; x < numThreads; x++)
             {
                 threads[x]->join();
                 delete threads[x];
