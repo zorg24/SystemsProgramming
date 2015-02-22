@@ -10,6 +10,8 @@
 #include "SlidingPuzzleState.h"
 #include "Timer.h"
 #include "SharedLList.h"
+#include <algorithm>
+#include <iostream>
 
 namespace ParallelBFS {
 
@@ -27,49 +29,47 @@ namespace ParallelBFS {
 		// Write your solution code here
 		while (true)
 		{
-			Timer roundTimer;
-			uint32_t x;
+            uint32_t x;
 			SlidingPuzzleState s;
 			LList<int> moves;
 
 			while (workQueue->RemoveFront(x))
 			{
-				if (x > s.GetMaxRank())
-				{
-					return;
-				}
-				if (data[x] == depth)
-				{
-					s.Unrank(x);
-					s.GetMoves(moves);
-					while (moves.IsEmpty() == false)
-					{
-						s.ApplyMove(moves.PeekFront());
-						uint32_t rank = s.Rank();
-						s.UndoMove(moves.PeekFront());
-						moves.RemoveFront();
-
-						dataLock->lock();
-						if (data[rank] == 255)
-						{
-							data[rank] = depth + 1;
-							*seenStates++;
-						}
-						dataLock->unlock();
-					}
-				}
+                if (x > s.GetMaxRank())
+                {
+                    return;
+                }
+                for (uint32_t i = x; i < x + workSize; i++)
+                {
+                    if (data[x] == depth)
+                    {
+                        s.Unrank(x);
+                        s.GetMoves(moves);
+                        while (moves.IsEmpty() == false)
+                        {
+                            s.ApplyMove(moves.PeekFront());
+                            uint32_t rank = s.Rank();
+                            s.UndoMove(moves.PeekFront());
+                            moves.RemoveFront();
+                            
+                            dataLock->lock();
+                            if (data[rank] == 255)
+                            {
+                                data[rank] = depth + 1;
+                                (*seenStates)++;
+                            }
+                            dataLock->unlock();
+                        }
+                    }
+                }
 			}
-			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
-			std::cout << "Depth " << depth;
-			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
-			std::cout << " total states seen.\n";
-			depth++;
 			std::this_thread::yield();
 		}
 	}
 
 	void DoBFS(int numThreads)
 	{
+        numThreads = 1;
 		std::cout << "Running with " << numThreads << " threads\n";
 		// By default, starts at goal state
 		SlidingPuzzleState s;
@@ -96,42 +96,37 @@ namespace ParallelBFS {
 			Timer roundTimer;
 
 			// Write the code:
-
 			// 1. to displatch threads
-
 			for (int x = 0; x < numThreads; x++)
 			{
 				threads[x] = new std::thread(WorkerThread, &workQueue, &lock, stateDepths, &seenStates, currDepth);
 			}
 
 			// 2. to send the work to the queue
-
-            for (uint32_t x = 0; x < s.GetMaxRank(); x++)
+            for (uint32_t x = 0; x < s.GetMaxRank(); x += workSize)
             {
-               workQueue.AddBack(x);
+               workQueue.AddBack(std::min(x, s.GetMaxRank()));
             }
             
 			// 3. to tell the threads that all work is complete
             //use getMaxRank+1
             for(int x = 0; x < numThreads; x++)
             {
-                workQueue.AddBack(s.GetMaxRank()+1);
+                workQueue.AddBack(s.GetMaxRank() + 1);
             }
             
-            
 			// 4. to join with the threads
-
             for(int x = 0; x < s.GetMaxRank(); x++)
             {
                 threads[x]->join();
                 delete threads[x];
             }
 			
-			//std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
-			//std::cout << "Depth " << currDepth;
-			//std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
-			//std::cout << " total states seen.\n";
-			//currDepth++;
+			std::cout << roundTimer.GetElapsedTime() << "s elapsed. ";
+			std::cout << "Depth " << currDepth;
+			std::cout << " complete. " << seenStates << " of " << s.GetMaxRank();
+			std::cout << " total states seen.\n";
+			currDepth++;
 		}
 		std::cout << fullTimer.EndTimer() << "s elapsed\n";
 		delete[] stateDepths;
