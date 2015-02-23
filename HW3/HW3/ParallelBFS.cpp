@@ -27,8 +27,14 @@ namespace ParallelBFS {
 	void WorkerThread(SharedLList<uint32_t> *workQueue, std::mutex *dataLock, uint8_t *data, uint32_t *seenStates, int depth)
 	{
 		// Write your solution code here
+        struct state {
+            int depth;
+            uint32_t rank;
+        };
+        uint32_t states = 0;
+        LList<state> stuff;
 		while (true)
-		{
+        {
             uint32_t x;
 			SlidingPuzzleState s;
 			LList<int> moves;
@@ -37,9 +43,19 @@ namespace ParallelBFS {
 			{
                 if (x > s.GetMaxRank())
                 {
+                    dataLock->lock();
+                    (*seenStates) += states;
+                    state i;
+                    while (!stuff.IsEmpty())
+                    {
+                        i = stuff.PeekFront();
+                        data[i.rank] = i.depth;
+                        stuff.RemoveFront();
+                    }
+                    dataLock->unlock();
                     return;
                 }
-                for (uint32_t i = x; i < x + workSize; i++)
+                for (uint32_t i = x; i < x + workSize && i <= s.GetMaxRank(); i++)
                 {
                     if (data[i] == depth)
                     {
@@ -54,10 +70,12 @@ namespace ParallelBFS {
                             
                             if (data[rank] == 255)
                             {
-                                dataLock->lock();
-                                data[rank] = depth + 1;
-                                (*seenStates)++;
-                                dataLock->unlock();
+                                stuff.AddFront({depth+1, rank});
+//                                dataLock->lock();
+//                                data[rank] = depth + 1;
+//                                (*seenStates)++;
+                                states++;
+//                                dataLock->unlock();
 
                             }
                         }
