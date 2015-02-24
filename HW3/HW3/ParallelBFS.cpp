@@ -38,23 +38,23 @@ namespace ParallelBFS {
             SlidingPuzzleState s;
             LList<int> moves;
             
-            while (workQueue->RemoveFront(x))
+            while (workQueue->RemoveFront(x)) // while there's something to remove
             {
-                if (x > s.GetMaxRank())
+                if (x > s.GetMaxRank()) //make sure that what we're comparing to is larger than the maxRank
                 {
-                    dataLock->lock();
-                    state i;
-                    while (!stuff.IsEmpty())
+                    dataLock->lock(); //lcok
+                    state i; //variable name
+                    while (!stuff.IsEmpty()) //while the list of stuff isn't empty
                     {
-                        i = stuff.PeekFront();
-                        if (data[i.rank] == 255) //was i.depth
+                        i = stuff.PeekFront(); //look at the front asign it to variable
+                        if (data[i.rank] == 255) //was i.depth, see if at this location at this rank we've seen this before
                         {
-                            (*seenStates)++;
+                            (*seenStates)++; //yes: increment the seen states
                         }
-                        data[i.rank] = i.depth;
-                        stuff.RemoveFront();
+                        data[i.rank] = i.depth; //reassign the rank to be the the depth we found it out (+1 already accounted for)
+                        stuff.RemoveFront(); //remove the front and start over in while loop
                     }
-                    dataLock->unlock();
+                    dataLock->unlock(); //unlock
                     return;
                 }
                 for (uint32_t i = x; i < x + workSize && i < s.GetMaxRank(); i++)
