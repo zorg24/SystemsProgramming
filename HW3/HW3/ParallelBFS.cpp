@@ -31,7 +31,6 @@ namespace ParallelBFS {
             int depth;
             uint32_t rank;
         };
-        uint32_t states = 0;
         LList<state> stuff;
 		while (true)
         {
@@ -44,11 +43,14 @@ namespace ParallelBFS {
                 if (x > s.GetMaxRank())
                 {
                     dataLock->lock();
-                    (*seenStates) += states;
                     state i;
                     while (!stuff.IsEmpty())
                     {
                         i = stuff.PeekFront();
+						if (data[i.depth] == 255)
+						{
+							(*seenStates)++;
+						}
                         data[i.rank] = i.depth;
                         stuff.RemoveFront();
                     }
@@ -70,13 +72,7 @@ namespace ParallelBFS {
                             
                             if (data[rank] == 255)
                             {
-                                stuff.AddFront({depth+1, rank});
-//                                dataLock->lock();
-//                                data[rank] = depth + 1;
-//                                (*seenStates)++;
-                                states++;
-//                                dataLock->unlock();
-
+								stuff.AddFront({ depth + 1, rank });
                             }
                         }
                     }
