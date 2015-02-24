@@ -205,4 +205,8 @@ namespace ParallelBFS {
     //	0.63s elapsed. Depth 52 complete. 239500800 of 239500800 total states seen.
     //	53.77s elapsed
     
+    
+    //K's MBP:
+    //166.40s elapsed
+
 }
