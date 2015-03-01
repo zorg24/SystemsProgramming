@@ -12,6 +12,7 @@
 #include "SharedLList.h"
 #include <algorithm>
 #include <iostream>
+#include <random>
 
 namespace ParallelBFS {
     
@@ -27,31 +28,31 @@ namespace ParallelBFS {
     void WorkerThread(SharedLList<uint32_t> *workQueue, std::mutex *dataLock, uint8_t *data, uint32_t *seenStates, int depth)
     {
         // Write your solution code here
-        struct state {
+ /*       struct state {
             int depth;
             uint32_t rank;
-        };
-        LList<state> stuff;
+        };*/
+		LList<int> moves;
+        LList<uint32_t> stuff;
         while (true)
         {
             uint32_t x;
             SlidingPuzzleState s;
-            LList<int> moves;
             
             while (workQueue->RemoveFront(x)) // while there's something to remove
             {
                 if (x > s.GetMaxRank()) //make sure that what we're comparing to is larger than the maxRank
                 {
                     dataLock->lock(); //lcok
-                    state i; //variable name
+                    uint32_t i; //variable name
                     while (!stuff.IsEmpty()) //while the list of stuff isn't empty
                     {
                         i = stuff.PeekFront(); //look at the front asign it to variable
-                        if (data[i.rank] == 255) //was i.depth, see if at this location at this rank we've seen this before
+                        if (data[i] == 255) //was i.depth, see if at this location at this rank we've seen this before
                         {
                             (*seenStates)++; //yes: increment the seen states
                         }
-                        data[i.rank] = i.depth; //reassign the rank to be the the depth we found it out (+1 already accounted for)
+                        data[i] = depth + 1; //reassign the rank to be the the depth we found it out (+1 already accounted for)
                         stuff.RemoveFront(); //remove the front and start over in while loop
                     }
                     dataLock->unlock(); //unlock
@@ -72,7 +73,7 @@ namespace ParallelBFS {
                             
                             if (data[rank] == 255)
                             {
-                                stuff.AddFront({ depth + 1, rank });
+                                stuff.AddFront(rank);
                             }
                         }
                     }
@@ -84,7 +85,6 @@ namespace ParallelBFS {
     
     void DoBFS(int numThreads)
     {
-        //        numThreads = 1;
         std::cout << "Running with " << numThreads << " threads\n";
         // By default, starts at goal state
         SlidingPuzzleState s;
@@ -143,7 +143,45 @@ namespace ParallelBFS {
             std::cout << " total states seen.\n";
             currDepth++;
         }
-        std::cout << fullTimer.EndTimer() << "s elapsed\n";
+
+// I wasn't sure what we were supposed to print out for the extra credit, so I just printed the boards out like for previous assignment...
+        std::cout << fullTimer.EndTimer() << "s elapsed\n" << "Starting Extra Credit:\n";
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<uint32_t> r{0, s.GetMaxRank()};
+
+		for (int i = 0; i < 10; ++i)
+		{
+			uint32_t rank = r(gen);
+			uint8_t depth = stateDepths[rank];
+			std::cout << "Solving puzzle " << i << " of rank " << rank << " in " << static_cast<uint16_t>(depth) << " steps \n";
+			// the cast is just a quick way to keep it from printing as a char
+			s.Unrank(rank);
+			while (!s.IsSolution())
+			{
+				std::cout << "Step " << static_cast<uint16_t>(depth) << "\n";
+				s.Print();
+				std::cout << "\n";
+				LList<int> moves;
+				s.GetMoves(moves);
+				while (!moves.IsEmpty())
+				{
+					int move = moves.PeekFront();
+					s.ApplyMove(move);
+					uint8_t newDepth = stateDepths[s.Rank()];
+					if (newDepth < depth)
+					{
+						depth = newDepth;
+						break;
+					}
+					s.UndoMove(move);
+					moves.RemoveFront();
+				}
+			}
+			s.Print();
+			std::cout << "\n";
+		}
+
         delete[] stateDepths;
         delete[] threads;
     }
@@ -209,4 +247,6 @@ namespace ParallelBFS {
     //K's MBP:
     //166.40s elapsed
 
+	//Nathan's laptop (i7-3720QM):
+	//43s
 }
