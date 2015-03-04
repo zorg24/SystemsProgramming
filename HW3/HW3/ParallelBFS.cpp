@@ -71,6 +71,7 @@ namespace ParallelBFS {
                             s.UndoMove(moves.PeekFront());
                             moves.RemoveFront();
                             
+                            
                             if (data[rank] == 255)
                             {
                                 stuff.AddFront(rank);
@@ -244,8 +245,10 @@ namespace ParallelBFS {
     //	53.77s elapsed
     
     
-    //K's MBP:
+    //K's MBP: debug
     //166.40s elapsed
+    //release:
+    //88.34s elapsed
 
 	//Nathan's laptop (i7-3720QM):
 	//43s
