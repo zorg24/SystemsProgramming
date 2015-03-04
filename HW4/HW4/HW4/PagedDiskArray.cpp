@@ -7,7 +7,8 @@
 #include "PagedDiskArray.h"
 
 // Implement the PagedDiskArray class here
-PagedDiskArray::PagedDiskArray(size_t pageSize, size_t numPages, const char *fileName)
+
+PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const char *fileName_init)  : pageSize(pageSize_init), numPages(numPages_init), arraySize(pageSize * numPages) //initalizing datamembers to parameters
 {
     
 }

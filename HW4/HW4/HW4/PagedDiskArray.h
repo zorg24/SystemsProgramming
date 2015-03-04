@@ -20,7 +20,7 @@ public:
 	//   numPages - number of pages in file
 	//   fileName - file to use to store array. File will be erased if
 	//              already exists, and filled with all 0.
-	PagedDiskArray(size_t pageSize, size_t numPages, const char *fileName);
+	PagedDiskArray(size_t pageSize_init, size_t numPages_init, const char *fileName_init);
 
 	// Destructor - flush dirty pages, close file, and free all memory.
 	~PagedDiskArray();
