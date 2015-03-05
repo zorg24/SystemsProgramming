@@ -26,7 +26,7 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
         for(int i = 0; i < numPages; ++i)
         {
             fwrite(&pf, sizeof(pf) , 1, f);
-
+            pf.pageLoaded++;
         }
     }
     
@@ -52,12 +52,16 @@ uint8_t PagedDiskArray::operator[](size_t index)
         }
     }
     
-    return 0;
+    return 0; //delete this later
 }
 
-
+// Change a value in the array.Terminates program if out of bounds.
+//
+// index - byte index in the paged array.
+// value - value to store in the array at the specified index.
 void PagedDiskArray::set(size_t index, uint8_t value)
 {
+    
     
 }
 
@@ -85,7 +89,14 @@ void PagedDiskArray::LoadPage(size_t pageNum, PageFrame *f)
 // Map page number to page frame in memory - returns nullptr if not present
 PagedDiskArray::PageFrame* PagedDiskArray::GetPageFrame(size_t pageNum)
 {
-    
+    for(int i = 0; i < numPageFrames; ++i)
+    {
+        if(pageNum == frames[i].pageLoaded)
+        {
+            return frames+i;
+        }
+    }
+    return nullptr;
 }
 
 // Choose best frame to replace in memory (smallest timeLoaded)
@@ -108,7 +119,17 @@ PagedDiskArray::PageFrame* PagedDiskArray::ChooseReplacementFrame()
 // dirty is true;
 uint8_t* PagedDiskArray::GetElement(size_t index, bool dirty)
 {
+    PageFrame *pf = GetPageFrame(index / pageSize);
     
+    if(pf == nullptr)
+    {
+        WritePageIfDirty(ChooseReplacementFrame());
+        LoadPage(index / pageSize, ChooseReplacementFrame());
+    }
+    if (dirty)
+        pf->dirty = true;
+    return &pf->buffer[index % pageSize];
+        
 }
 
 
