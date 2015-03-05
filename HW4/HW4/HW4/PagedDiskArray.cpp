@@ -77,7 +77,10 @@ void PagedDiskArray::WritePageIfDirty(PageFrame *f)
 // Write all dirty pages to the disk file
 void PagedDiskArray::Flush()
 {
-    
+	for (int i = 0; i < numPageFrames; ++i)
+	{
+		WritePageIfDirty(frames + i);
+	}
 }
 
 // Load page into frame
