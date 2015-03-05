@@ -64,7 +64,10 @@ void PagedDiskArray::set(size_t index, uint8_t value)
 
 void PagedDiskArray::WritePageIfDirty(PageFrame *f)
 {
-    
+	if (f->dirty)
+	{
+		fwrite(f, sizeof(PageFrame), 1, pageFile);
+	}
 }
 
 // Write all dirty pages to the disk file
@@ -76,7 +79,7 @@ void PagedDiskArray::Flush()
 // Load page into frame
 void PagedDiskArray::LoadPage(size_t pageNum, PageFrame *f)
 {
-    
+	fread(f, sizeof(PageFrame), 1, pageFile);
 }
 
 // Map page number to page frame in memory - returns nullptr if not present

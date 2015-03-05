@@ -28,3 +28,8 @@
 *.APS
 *.bin
 Lab13/Lab13/Lab13/main.cpp
+HW3/HW3/HW3.vcxproj.user
+HW3/Release/o.txt
+HW3/Release/o2.txt
+HW3/Release/o3.txt
+*.user
