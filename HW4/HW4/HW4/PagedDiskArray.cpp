@@ -22,7 +22,6 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
     pageFile = f;
     if(f != 0)
     {
-        std::cout << "File already exists" << std::endl;
         for(int i = 0; i < numPages; ++i)
         {
             fwrite(&pf, sizeof(pf) , 1, f);
@@ -30,11 +29,21 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
         }
     }
     
+    for (int i = 0; i < numPageFrames; i++)
+    {
+        frames[i].buffer = new uint8_t[pageSize];
+        memset(frames[i].buffer, 0, pageSize);
+    }
+    
 }
 
 PagedDiskArray::~PagedDiskArray()
 {
-    
+    fclose(pageFile);
+    for (int i = 0; i < numPageFrames; i++)
+    {
+        delete[] frames[i].buffer;
+    }
 }
 
 // Return a value in the array. Terminates program if out of bounds.
@@ -43,16 +52,7 @@ PagedDiskArray::~PagedDiskArray()
 
 uint8_t PagedDiskArray::operator[](size_t index)
 {
-    //check if frames (the cache) the page we're trying to look up is in the cache already or not, if not laod it and replace one of the two, override the smaller of the two
-    for(int i = 0; i < numPageFrames; ++i)
-    {
-        if(index >= (frames[i].pageLoaded * pageSize) && index <  ((frames[i].pageLoaded+1) * pageSize))
-        {
-            return frames[i].buffer[index % pageSize];
-        }
-    }
-    
-    return 0; //delete this later
+    return *GetElement(index, false);
 }
 
 // Change a value in the array.Terminates program if out of bounds.
@@ -61,8 +61,11 @@ uint8_t PagedDiskArray::operator[](size_t index)
 // value - value to store in the array at the specified index.
 void PagedDiskArray::set(size_t index, uint8_t value)
 {
-    
-    
+    if (index > arraySize)
+    {
+        std::terminate();
+    }
+    *GetElement(index, true) = value;
 }
 
 
@@ -126,13 +129,14 @@ uint8_t* PagedDiskArray::GetElement(size_t index, bool dirty)
     
     if(pf == nullptr)
     {
-        WritePageIfDirty(ChooseReplacementFrame());
-        LoadPage(index / pageSize, ChooseReplacementFrame());
+        PageFrame *p = ChooseReplacementFrame();
+        WritePageIfDirty(p);
+        LoadPage(index / pageSize, p);
+        pf = p;
     }
     if (dirty)
         pf->dirty = true;
     return &pf->buffer[index % pageSize];
-        
 }
 
 
