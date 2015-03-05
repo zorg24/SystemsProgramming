@@ -12,6 +12,7 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
     //   fileName - file to use to store array. File will be erased if
     //              already exists, and filled with all 0.
     PageFrame pf;
+    pf.buffer = new uint8_t[pageSize];
     memset(pf.buffer, 0, pageSize);
     pf.dirty = false;
     pf.pageLoaded = 0;
@@ -34,6 +35,7 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
         frames[i].buffer = new uint8_t[pageSize];
         memset(frames[i].buffer, 0, pageSize);
     }
+    delete [] pf.buffer;
     
 }
 
