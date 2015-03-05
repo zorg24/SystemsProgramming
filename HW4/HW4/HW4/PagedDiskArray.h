@@ -9,6 +9,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <iostream>
+#include <cstdlib>
 
 // PagedDiskArray - provide an object that acts like an array of uint8_t (bytes)
 

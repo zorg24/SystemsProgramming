@@ -5,11 +5,30 @@
 #define _CRT_SECURE_NO_WARNINGS    // needed for Visual Studio
 
 #include "PagedDiskArray.h"
-
 // Implement the PagedDiskArray class here
 
 PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const char *fileName_init)  : pageSize(pageSize_init), numPages(numPages_init), arraySize(pageSize * numPages) //initalizing datamembers to parameters
 {
+    //   fileName - file to use to store array. File will be erased if
+    //              already exists, and filled with all 0.
+    PageFrame pf;
+    memset(pf.buffer, 0, pageSize);
+    pf.dirty = false;
+    pf.pageLoaded = 0;
+    pf.accessPTime = 0;
+    pseudoTime = 0;
+    
+    FILE *f = fopen(fileName_init, "wb+");
+    pageFile = f;
+    if(f != 0)
+    {
+        std::cout << "File already exists" << std::endl;
+        for(int i = 0; i < numPages; ++i)
+        {
+            fwrite(&pf, sizeof(pf) , 1, f);
+
+        }
+    }
     
 }
 
@@ -18,9 +37,22 @@ PagedDiskArray::~PagedDiskArray()
     
 }
 
+// Return a value in the array. Terminates program if out of bounds.
+//
+// index - byte index in the paged array.
+
 uint8_t PagedDiskArray::operator[](size_t index)
 {
+    //check if frames (the cache) the page we're trying to look up is in the cache already or not, if not laod it and replace one of the two, override the smaller of the two
+    for(int i = 0; i < numPageFrames; ++i)
+    {
+        if(index >= (frames[i].pageLoaded * pageSize) && index <  ((frames[i].pageLoaded+1) * pageSize))
+        {
+            return frames[i].buffer[index % pageSize];
+        }
+    }
     
+    return 0;
 }
 
 
@@ -46,16 +78,27 @@ void PagedDiskArray::LoadPage(size_t pageNum, PageFrame *f)
 {
     
 }
+
 // Map page number to page frame in memory - returns nullptr if not present
-PageFrame* PagedDiskArray::GetPageFrame(size_t pageNum)
+PagedDiskArray::PageFrame* PagedDiskArray::GetPageFrame(size_t pageNum)
 {
     
 }
 
 // Choose best frame to replace in memory (smallest timeLoaded)
-PageFrame* PagedDiskArray::ChooseReplacementFrame()
+PagedDiskArray::PageFrame* PagedDiskArray::ChooseReplacementFrame()
 {
-    
+    uint64_t minTime = ~0;
+    int minIndex = 0;
+    for(int i = 0; i < numPageFrames; ++i)
+    {
+        if(frames[i].accessPTime < minTime)
+        {
+            minTime = frames[i].accessPTime;
+            minIndex = i;
+        }
+    }
+    return frames+minIndex;
 }
 // Get pointer to desired array element, writing and reading
 // page frames as necessary.  Set page frame dirty flag if
