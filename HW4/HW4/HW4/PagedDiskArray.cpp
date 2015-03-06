@@ -113,7 +113,7 @@ void PagedDiskArray<T>::LoadPage(size_t pageNum, PageFrame *f)
 
 // Map page number to page frame in memory - returns nullptr if not present
 template<class T>
-PagedDiskArray<T>::PageFrame* PagedDiskArray<T>::GetPageFrame(size_t pageNum)
+typename PagedDiskArray<T>::PageFrame* PagedDiskArray<T>::GetPageFrame(size_t pageNum)
 {
 	for (int i = 0; i < numPageFrames; ++i)
 	{
@@ -127,7 +127,7 @@ PagedDiskArray<T>::PageFrame* PagedDiskArray<T>::GetPageFrame(size_t pageNum)
 
 // Choose best frame to replace in memory (smallest timeLoaded)
 template<class T>
-PagedDiskArray<T>::PageFrame* PagedDiskArray<T>::ChooseReplacementFrame()
+typename PagedDiskArray<T>::PageFrame* PagedDiskArray<T>::ChooseReplacementFrame()
 {
 	uint64_t minTime = ~0;
 	int minIndex = 0;
