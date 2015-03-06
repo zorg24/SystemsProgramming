@@ -10,6 +10,7 @@
 
 // TestPagedDiskArrray - run tests on the PagedDiskArray class with specified
 //    page size and number of pages.
+template<class T>
 void TestPagedDiskArray(size_t pageSize, size_t numPages);
 
 #endif /* defined(__HW4__TestPagedDiskArray__) */

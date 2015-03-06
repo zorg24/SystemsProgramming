@@ -14,6 +14,7 @@
 
 // PagedDiskArray - provide an object that acts like an array of uint8_t (bytes)
 
+template<class T>
 class PagedDiskArray {
 public:
 	// Constructor - create disk file
@@ -30,13 +31,13 @@ public:
 	// Return a value in the array. Terminates program if out of bounds.
 	//
 	// index - byte index in the paged array.
-	uint8_t operator[](size_t index);
+	T operator[](size_t index);
 
 	// Change a value in the array.Terminates program if out of bounds.
 	//
 	// index - byte index in the paged array.
 	// value - value to store in the array at the specified index.
-	void set(size_t index, uint8_t value);
+	void set(size_t index, T value);
 
 private:
 	const size_t pageSize;  // page size in bytes
@@ -47,7 +48,7 @@ private:
 
 	// Define struct for page frame
 	struct PageFrame {
-		uint8_t *buffer;          // pointer to buffer
+		T *buffer;          // pointer to buffer
 		size_t pageLoaded;     // page number currently loaded
 		bool dirty;            // true if page modified in memory
 		uint64_t accessPTime;  // psuedoTime page was most recently accessed
@@ -75,7 +76,7 @@ private:
 	// Get pointer to desired array element, writing and reading
 	// page frames as necessary.  Set page frame dirty flag if
 	// dirty is true;
-	uint8_t *GetElement(size_t index, bool dirty);
+	T *GetElement(size_t index, bool dirty);
 };
 
 #endif /* defined(__HW4__PagedDiskArray__) */
