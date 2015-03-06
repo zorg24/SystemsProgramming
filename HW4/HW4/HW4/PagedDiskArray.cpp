@@ -18,16 +18,13 @@ PagedDiskArray::PagedDiskArray(size_t pageSize_init, size_t numPages_init, const
 	pf.pageLoaded = 0;
 	pf.accessPTime = 0;
 	pseudoTime = 0;
-
+	
 	FILE *f = fopen(fileName_init, "wb+");
 	pageFile = f;
-	if (f != 0)
+	for (int i = 0; i < numPages; ++i)
 	{
-		for (int i = 0; i < numPages; ++i)
-		{
-			fwrite(&pf, sizeof(pf), 1, f);
-			pf.pageLoaded++;
-		}
+		fwrite(pf.buffer, sizeof(uint8_t), pageSize, f);
+		pf.pageLoaded++;
 	}
 
 	for (int i = 0; i < numPageFrames; i++)
@@ -74,8 +71,16 @@ void PagedDiskArray::WritePageIfDirty(PageFrame *f)
 {
 	if (f->dirty)
 	{
-		fseek(pageFile, pageSize * f->pageLoaded, SEEK_SET);
-		fwrite(f->buffer, sizeof(uint8_t), pageSize, pageFile);
+		if (fseek(pageFile, pageSize * f->pageLoaded, SEEK_SET) != 0)
+		{
+			std::cerr << "Seek to write failed.";
+			std::terminate();
+		}
+		if (fwrite(f->buffer, sizeof(uint8_t), pageSize, pageFile) != pageSize)
+		{
+			std::cerr << "Write failed.";
+			std::terminate();
+		}
 	}
 }
 
@@ -91,9 +96,17 @@ void PagedDiskArray::Flush()
 // Load page into frame
 void PagedDiskArray::LoadPage(size_t pageNum, PageFrame *f)
 {
-	fseek(pageFile, pageSize * pageNum, SEEK_SET);
-	fread(f->buffer, sizeof(uint8_t), pageSize, pageFile);
-	f->pageLoaded = numPages;
+	if (fseek(pageFile, pageSize * pageNum, SEEK_SET) != 0)
+	{
+		std::cerr << "Seek to read failed.";
+		std::terminate();
+	}
+	if (fread(f->buffer, sizeof(uint8_t), pageSize, pageFile) != pageSize)
+	{
+		std::cerr << "Read failed.";
+		std::terminate();
+	}
+	f->pageLoaded = pageNum;
 	f->accessPTime = pseudoTime;
 	f->dirty = false;
 }
